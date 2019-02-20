@@ -5,7 +5,6 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 
 import java.util.HashMap;
@@ -34,7 +33,7 @@ public class KafkaConfig {
     private Integer sessionTimeout;
 
     @Bean
-    public ConsumerFactory<String, String> consumerFactory() {
+    public DefaultKafkaConsumerFactory<String, String> defaultKafkaConsumerFactory() {
         Map<String, Object> propsMap = new HashMap<>();
         propsMap.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, servers);
         propsMap.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, enableAutoCommit);
