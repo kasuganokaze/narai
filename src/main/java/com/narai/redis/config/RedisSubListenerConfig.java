@@ -60,15 +60,15 @@ public class RedisSubListenerConfig {
     }
 
     @Bean
-    public RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory, MessageListenerAdapter antiSpamAdapter) {
+    public RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory, MessageListenerAdapter simpleAdapter) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
-        container.addMessageListener(antiSpamAdapter, new PatternTopic(REDIS_CHANNEL));
+        container.addMessageListener(simpleAdapter, new PatternTopic(REDIS_CHANNEL));
         return container;
     }
 
     @Bean
-    public MessageListenerAdapter antiSpamAdapter(Consumer consumer) {
+    public MessageListenerAdapter simpleAdapter(Consumer consumer) {
         return new MessageListenerAdapter(consumer, "receiver");
     }
 

@@ -49,7 +49,6 @@ public class KafkaLagService {
                     commitOffsetMap.put(topicAndPartition.partition(), committed.offset());
                 }
             }
-
             //累加lag
             Long lagSum = 0L;
             if (endOffsetMap.size() == commitOffsetMap.size()) {
@@ -84,12 +83,10 @@ public class KafkaLagService {
         return consumer;
     }
 
-    private org.apache.kafka.clients.consumer.Consumer<String, String> createConsumer(String topic) {
+    private Consumer<String, String> createConsumer(String topic) {
         if (CONSUMER_MAP.containsKey(topic)) {
             return CONSUMER_MAP.get(topic);
         }
-//        //发条空数据用于创建topic
-//        send(topic, "");
         Consumer<String, String> consumer = consumerFactory.createConsumer();
         consumer.subscribe(Arrays.asList(topic));
         return consumer;

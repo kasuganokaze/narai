@@ -2,8 +2,8 @@ package com.narai.kafka.config;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
@@ -16,7 +16,7 @@ import java.util.Map;
  * @date: 2019-02-20
  */
 @Configuration
-public class KafkaConfig implements InitializingBean {
+public class KafkaConfig {
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String servers;
@@ -32,14 +32,9 @@ public class KafkaConfig implements InitializingBean {
     private String groupId;
     @Value("${spring.kafka.consumer.session-timeout}")
     private Integer sessionTimeout;
-    private ConsumerFactory<String, String> consumerFactory;
 
-    public ConsumerFactory<String, String> getConsumerFactory() {
-        return this.consumerFactory;
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
+    @Bean
+    public ConsumerFactory<String, String> consumerFactory() {
         Map<String, Object> propsMap = new HashMap<>();
         propsMap.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, servers);
         propsMap.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, enableAutoCommit);
@@ -50,7 +45,7 @@ public class KafkaConfig implements InitializingBean {
         propsMap.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, maxPollRecords);
         propsMap.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         propsMap.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, sessionTimeout);
-        this.consumerFactory = new DefaultKafkaConsumerFactory<>(propsMap);
+        return new DefaultKafkaConsumerFactory<>(propsMap);
     }
 
 }

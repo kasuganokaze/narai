@@ -14,4 +14,5 @@ public class Consumer {
     public void receiver(String message) {
         log.info(message);
     }
+
 }
