@@ -5,7 +5,7 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -18,12 +18,12 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Slf4j
 @Service
-public class KafkaLagService {
+public class KafkaLogService {
 
     @Resource
-    private DefaultKafkaConsumerFactory<String, String> consumerFactory;
+    private ConsumerFactory<String, String> consumerFactory;
 
-    public Integer leftOffset(String topicName) {
+    public Integer lagOffset(String topicName) {
         try {
             Consumer<String, String> consumer = getConsumer(topicName);
             List<TopicPartition> topicPartitions = new ArrayList<>();
@@ -91,6 +91,5 @@ public class KafkaLagService {
         consumer.subscribe(Arrays.asList(topic));
         return consumer;
     }
-
 
 }

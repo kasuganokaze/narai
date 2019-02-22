@@ -8,11 +8,10 @@ spring:
       enable-auto-commit: true
       auto-offset-reset: earliest
       max-poll-records: 200
-      session-timeout: 30000
     producer:
       retries: 3
       batch-size: 10
-
+  # redis配置
   redis:
     host: 127.0.0.1
     port: 6379
@@ -23,6 +22,7 @@ spring:
         max-active: 200
         min-idle: 100
         max-idle: 100
+  # es配置
   data:
     elasticsearch:
       cluster-nodes: 127.0.0.1:9300
