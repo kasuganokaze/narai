@@ -1,6 +1,6 @@
 package com.narai.redis.producer;
 
-import com.narai.redis.config.RedisSubListenerConfig;
+import com.narai.redis.config.RedisSubscribeConfig;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +17,7 @@ public class Producer {
     private StringRedisTemplate stringRedisTemplate;
 
     public void send() {
-        stringRedisTemplate.convertAndSend(RedisSubListenerConfig.REDIS_CHANNEL, "haha");
+        stringRedisTemplate.convertAndSend(RedisSubscribeConfig.REDIS_CHANNEL, "haha");
     }
 
 }
