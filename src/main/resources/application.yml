@@ -27,14 +27,12 @@ spring:
     elasticsearch:
       cluster-nodes: 127.0.0.1:9300
       cluster-name: elasticsearch
-
     # mongo配置
     mongodb:
       host: 127.0.0.1
       port: 27017
       #username: kaze
       #password: 123456
-      
   # mysql配置
   datasource:
     url: jdbc:mysql://127.0.01:3306/kaze

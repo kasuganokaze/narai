@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class Consumer {
 
-    public void receiver(String message) {
-        log.info(message);
+    public void receiver(Object message) {
+        log.info("{}", message);
     }
 
 }

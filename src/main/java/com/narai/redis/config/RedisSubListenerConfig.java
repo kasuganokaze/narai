@@ -32,7 +32,6 @@ public class RedisSubListenerConfig {
     private Integer minIdle;
     @Value("${spring.redis.jedis.pool.max-wait}")
     private Integer maxWait;
-
     public static String REDIS_CHANNEL = "channel";
 
     @Bean
