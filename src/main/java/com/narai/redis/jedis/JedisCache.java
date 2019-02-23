@@ -27,9 +27,7 @@ public class JedisCache {
      */
     public void set(String key, Object value) {
         try (Jedis jedis = jedisPool.getResource()) {
-            byte[] rawKey = key.getBytes();
-            byte[] rawValue = serialize((Serializable) value);
-            jedis.set(rawKey, rawValue);
+            jedis.set(key.getBytes(), serialize((Serializable) value));
         }
     }
 
@@ -42,17 +40,14 @@ public class JedisCache {
             return deserialize(rawValue);
         }
     }
-    // --------------------------------------------------
+    // string类型结束--------------------------------------------------
 
     /**
      * hash类型开始
      */
     public void hset(String key, String field, Object value) {
         try (Jedis jedis = jedisPool.getResource()) {
-            byte[] rawKey = key.getBytes();
-            byte[] fieldKey = field.getBytes();
-            byte[] rawValue = serialize((Serializable) value);
-            jedis.hset(rawKey, fieldKey, rawValue);
+            jedis.hset(key.getBytes(), field.getBytes(), serialize((Serializable) value));
         }
     }
 
@@ -68,7 +63,7 @@ public class JedisCache {
 
     public Long hdel(String key, String field) {
         try (Jedis jedis = jedisPool.getResource()) {
-            return jedis.hdel(key, field);
+            return jedis.hdel(key.getBytes(), field.getBytes());
         }
     }
 
@@ -85,8 +80,23 @@ public class JedisCache {
             return newMap;
         }
     }
-    // --------------------------------------------------
+    // hash类型结束--------------------------------------------------
 
+    /**
+     * bitset类型开始
+     */
+    public void setBit(String key, long offset, Boolean value) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            jedis.setbit(key.getBytes(), offset, value);
+        }
+    }
+
+    public Boolean getBit(String key, long offset) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.getbit(key.getBytes(), offset);
+        }
+    }
+    // bitset类结束--------------------------------------------------
 
     /**
      * 分布式锁开始
@@ -105,19 +115,19 @@ public class JedisCache {
             return Objects.equals(1L, result);
         }
     }
-    // --------------------------------------------------
+    // 分布式锁结束--------------------------------------------------
 
     /**
      * 删除key
      */
     public Long del(String key) {
         try (Jedis jedis = jedisPool.getResource();) {
-            return jedis.del(key);
+            return jedis.del(key.getBytes());
         }
     }
 
     /**
-     * 加上过期时间
+     * 设置过期时间
      */
     public Long expire(String key, int second) {
         try (Jedis jedis = jedisPool.getResource()) {
@@ -139,7 +149,7 @@ public class JedisCache {
      */
     public void persist(String key) {
         try (Jedis jedis = jedisPool.getResource()) {
-            jedis.persist(key);
+            jedis.persist(key.getBytes());
         }
     }
 
