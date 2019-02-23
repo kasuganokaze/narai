@@ -96,7 +96,13 @@ public class JedisCache {
             return jedis.getbit(key.getBytes(), offset);
         }
     }
-    // bitset类结束--------------------------------------------------
+
+    public Long bitcount(String key){
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.bitcount(key.getBytes());
+        }
+    }
+    // bitset类型结束--------------------------------------------------
 
     /**
      * 分布式锁开始
