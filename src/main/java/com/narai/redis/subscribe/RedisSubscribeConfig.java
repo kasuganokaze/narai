@@ -1,6 +1,5 @@
-package com.narai.redis.config;
+package com.narai.redis.subscribe;
 
-import com.narai.redis.consumer.Consumer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -26,8 +25,8 @@ public class RedisSubscribeConfig {
     }
 
     @Bean
-    public MessageListenerAdapter simpleAdapter(Consumer consumer) {
-        return new MessageListenerAdapter(consumer, "receiver");
+    public MessageListenerAdapter simpleAdapter(Subscriber consumer) {
+        return new MessageListenerAdapter(consumer, "handleMessage");
     }
 
 }

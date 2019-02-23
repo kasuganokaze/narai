@@ -1,4 +1,4 @@
-package com.narai.redis.config;
+package com.narai.redis.jedis;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
