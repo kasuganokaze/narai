@@ -71,7 +71,7 @@ public class JedisCache {
         try (Jedis jedis = jedisPool.getResource()) {
             Map<byte[], byte[]> rawMap = jedis.hgetAll(key.getBytes());
             if (CollectionUtils.isEmpty(rawMap)) {
-                return new HashMap<>();
+                return Collections.emptyMap();
             }
             Map<String, Object> newMap = new HashMap<>();
             rawMap.forEach((k, v) -> {

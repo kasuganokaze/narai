@@ -1,4 +1,4 @@
-package com.narai.elasticsearch;
+package com.narai.elasticsearch.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
@@ -24,10 +23,9 @@ import java.util.UUID;
 @Component
 public class RestClientUtils {
 
-    private final static String POST = "POST";
-    private final static String SEARCH = "_search";
-    private final static String UPDATE = "_update_by_query";
     private final static String DELETE = "_delete_by_query";
+    private final static String UPDATE = "_update_by_query";
+    private final static String SEARCH = "_search";
     private static RestClient restClient;
 
     @Resource
@@ -38,29 +36,21 @@ public class RestClientUtils {
     /**
      * 新增记录
      */
-    public static String doAdd(String index, String jsonParam) {
-        String endpoint = index + "/" + index + "/" + UUID.randomUUID().toString().replaceAll("-", "") + "?refresh=true";
+    public static void insert(String index, String type, String jsonParam) {
+        String id = UUID.randomUUID().toString().replaceAll("-", "");
+        String endpoint = index + "/" + type + "/" + id + "?refresh=true";
         try {
-            return renderForEs(endpoint, jsonParam, POST);
+            renderForEs(endpoint, jsonParam);
         } catch (IOException e) {
             log.error("", e);
         }
-        return null;
     }
 
     /**
      * 删除记录
      */
-    public static String doDelete(String index, Map<String, Object> query) {
-        return doDelete(Collections.singletonList(index), query);
-    }
-
-    /**
-     * 删除记录
-     */
-    public static String doDelete(Collection<String> indexes, Map<String, Object> query) {
-        String index = indexes.parallelStream().reduce((a, b) -> a + "," + b).get();
-        String endpoint = index + "/" + DELETE + "?refresh=true";
+    public static String delete(String index, String type, Map<String, Object> query) {
+        String endpoint = index + "/" + type + "/" + DELETE + "?refresh=true";
         String queryResult = query.entrySet().stream()
                 .map(a -> "{\"term\":{\"" + a.getKey() + "\":{\"value\": \"" + a.getValue() + "\"}}}")
                 .reduce((a, b) -> a + "," + b).get();
@@ -73,7 +63,7 @@ public class RestClientUtils {
                     "    }\n" +
                     "  }\n" +
                     "}";
-            return renderForEs(endpoint, jsonParam, POST);
+            return renderForEs(endpoint, jsonParam);
         } catch (IOException e) {
             log.error("", e);
         }
@@ -83,23 +73,8 @@ public class RestClientUtils {
     /**
      * 更新记录
      */
-    public static String doUpdate(String index, Map<String, Object> query, Map<String, Object> param) {
-        return doUpdate(Collections.singletonList(index), query, param);
-    }
-
-    /**
-     * 更新记录
-     */
-    public static String doUpdate(String index, String jsonParam) {
-        return doUpdate(Collections.singletonList(index), jsonParam);
-    }
-
-    /**
-     * 更新记录
-     */
-    public static String doUpdate(Collection<String> indexes, Map<String, Object> query, Map<String, Object> param) {
-        String index = indexes.parallelStream().reduce((a, b) -> a + "," + b).get();
-        String endpoint = index + "/" + UPDATE + "?refresh=true";
+    public static String update(String index, String type, Map<String, Object> query, Map<String, Object> param) {
+        String endpoint = index + "/" + type + "/" + UPDATE + "?refresh=true";
         String queryResult = query.entrySet().stream()
                 .map(a -> "{\"term\":{\"" + a.getKey() + "\":{\"value\": \"" + a.getValue() + "\"}}}")
                 .reduce((a, b) -> a + "," + b).get();
@@ -116,21 +91,7 @@ public class RestClientUtils {
                     "  },\n" +
                     "  \"script\": \"" + paramResult + "\"\n" +
                     "}";
-            return renderForEs(endpoint, jsonParam, POST);
-        } catch (IOException e) {
-            log.error("", e);
-        }
-        return null;
-    }
-
-    /**
-     * 更新记录
-     */
-    public static String doUpdate(Collection<String> indexes, String jsonParam) {
-        String index = indexes.parallelStream().reduce((a, b) -> a + "," + b).get();
-        String endpoint = index + "/" + UPDATE + "?refresh=true";
-        try {
-            return renderForEs(endpoint, jsonParam, POST);
+            return renderForEs(endpoint, jsonParam);
         } catch (IOException e) {
             log.error("", e);
         }
@@ -140,28 +101,44 @@ public class RestClientUtils {
     /**
      * 查询记录
      */
-    public static String doSearch(String index, String jsonParam) {
-        return doSearch(Collections.singletonList(index), jsonParam);
-    }
-
-    /**
-     * 查询记录
-     */
-    public static String doSearch(Collection<String> indexes, String jsonParam) {
-        String index = indexes.parallelStream().reduce((a, b) -> a + "," + b).get();
-        String endpoint = index + "/" + SEARCH;
+    public static String search(String index, String type, Map<String, Object> query) {
+        String endpoint = index + "/" + type + "/" + SEARCH;
+        String queryResult = query.entrySet().stream()
+                .map(a -> "{\"term\":{\"" + a.getKey() + "\":{\"value\": \"" + a.getValue() + "\"}}}")
+                .reduce((a, b) -> a + "," + b).get();
         try {
-            return renderForEs(endpoint, jsonParam, POST);
+            String jsonParam = "{\n" +
+                    "  \"query\": {\n" +
+                    "    \"bool\": {\n" +
+                    "      \"must\": [\n" + queryResult +
+                    "      ]\n" +
+                    "    }\n" +
+                    "  }\n" +
+                    "}";
+            return renderForEs(endpoint, jsonParam);
         } catch (IOException e) {
             log.error("", e);
         }
         return null;
     }
 
-    private static String renderForEs(String endpoint, String jsonParam, String method) throws IOException {
+    /**
+     * 查询记录
+     */
+    public static String search(String index, String type, String jsonParam) {
+        String endpoint = index + "/" + type + "/" + SEARCH;
+        try {
+            return renderForEs(endpoint, jsonParam);
+        } catch (IOException e) {
+            log.error("", e);
+        }
+        return null;
+    }
+
+    private static String renderForEs(String endpoint, String jsonParam) throws IOException {
         Map<String, String> params = Collections.emptyMap();
         HttpEntity entity = new NStringEntity(jsonParam, ContentType.APPLICATION_JSON);
-        Response response = restClient.performRequest(method, endpoint, params, entity);
+        Response response = restClient.performRequest("POST", endpoint, params, entity);
         return EntityUtils.toString(response.getEntity());
     }
 
