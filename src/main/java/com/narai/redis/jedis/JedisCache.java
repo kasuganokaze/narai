@@ -20,7 +20,7 @@ import static org.apache.commons.lang3.SerializationUtils.serialize;
 public class JedisCache {
 
     @Resource
-    private static JedisPool jedisPool;
+    private JedisPool jedisPool;
 
     /**
      * string 类型开始
@@ -97,7 +97,7 @@ public class JedisCache {
         }
     }
 
-    public Long bitcount(String key){
+    public Long bitcount(String key) {
         try (Jedis jedis = jedisPool.getResource()) {
             return jedis.bitcount(key.getBytes());
         }
