@@ -20,7 +20,7 @@ public class Publisher {
 
     @Scheduled(fixedRate = 3600000)
     public void send() {
-        stringRedisTemplate.convertAndSend(RedisSubscribeConfig.REDIS_CHANNEL, "我是订阅消息");
+        stringRedisTemplate.convertAndSend(RedisSubscribeConfig.REDIS_CHANNEL, "我是redis订阅消息");
     }
 
 }
