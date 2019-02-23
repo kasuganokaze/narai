@@ -77,6 +77,12 @@
             <artifactId>jsch</artifactId>
             <version>0.1.55</version>
         </dependency>
+        <!-- 属性注入 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
         <!-- 其它 -->
         <dependency>
             <groupId>com.alibaba</groupId>
