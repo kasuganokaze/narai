@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.FlushModeType;
 import javax.persistence.Query;
 import java.util.List;
 
@@ -51,6 +52,16 @@ public class JpaDemo {
         {
             // 所有被管理的实体都会从持久状态分离出来
             entityManager.clear();
+        }
+        {
+            // 默认
+            entityManager.setFlushMode(FlushModeType.AUTO);
+            // 手动
+            entityManager.setFlushMode(FlushModeType.COMMIT);
+            // 是否开启实体管理
+            entityManager.isOpen();
+            // 获取事务
+            entityManager.getTransaction();
         }
     }
 
