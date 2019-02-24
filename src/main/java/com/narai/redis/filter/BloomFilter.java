@@ -33,26 +33,18 @@ public class BloomFilter {
     }
 
     public void setBit(String key, String value) {
-        setBit(key, value.getBytes());
-    }
-
-    public void setBit(String key, byte[] bytes) {
         try (Jedis jedis = jedisPool.getResource()) {
             for (Integer seed : SEEDS) {
-                int hash = MurmurHash.hash(bytes, seed);
+                int hash = MurmurHash.hash(value.getBytes(), seed);
                 jedis.setbit(key.getBytes(), Math.abs(hash % BIT_SET_SIZE), true);
             }
         }
     }
 
     public boolean exists(String key, String value) {
-        return exists(key, value.getBytes());
-    }
-
-    public boolean exists(String key, byte[] bytes) {
         try (Jedis jedis = jedisPool.getResource()) {
             for (Integer seed : SEEDS) {
-                int hash = MurmurHash.hash(bytes, seed);
+                int hash = MurmurHash.hash(value.getBytes(), seed);
                 if (!jedis.getbit(key.getBytes(), Math.abs(hash % BIT_SET_SIZE))) {
                     return false;
                 }

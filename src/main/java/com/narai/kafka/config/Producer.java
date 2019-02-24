@@ -26,7 +26,7 @@ public class Producer {
     public void send() {
         ListenableFuture<SendResult<String, Object>> future = kafkaTemplate.send("myTestTopic", "我是kafka消息");
         future.addCallback(
-                result -> log.info("{}", "消息发送成"),
+                result -> log.info("{}", "消息发送成功"),
                 throwable -> log.info("{}", "消息发送失败")
         );
     }
