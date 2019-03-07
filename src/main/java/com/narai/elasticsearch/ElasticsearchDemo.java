@@ -3,11 +3,16 @@ package com.narai.elasticsearch;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.search.join.ScoreMode;
+import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.join.query.JoinQueryBuilders;
@@ -61,6 +66,37 @@ public class ElasticsearchDemo {
         SearchResponse response = searchRequestBuilder.execute().actionGet(TimeValue.timeValueSeconds(60L));
         SearchHits hits = response.getHits();
         List<JSONObject> list = Stream.of(hits.getHits()).map(r -> JSONObject.parseObject(r.getSourceAsString())).collect(Collectors.toList());
+    }
+
+    public void t() throws Exception {
+
+        BulkRequestBuilder bulkRequest = transportClient.prepareBulk();
+
+        JSONObject source = new JSONObject();
+        source.put("url", "url");
+
+        IndexRequest indexRequest = new IndexRequest();
+        indexRequest.id("id");
+        indexRequest.index("index");
+        indexRequest.type("type");
+        indexRequest.routing("routing");
+        indexRequest.source(source);
+
+        UpdateRequest updateRequest = new UpdateRequest();
+        updateRequest.id("id");
+        updateRequest.index("index");
+        updateRequest.type("type");
+        updateRequest.routing("routing");
+        updateRequest.doc(XContentFactory.jsonBuilder()
+                .startObject()
+                .field("url", "url")
+                .endObject());
+        updateRequest.upsert(indexRequest);
+
+        bulkRequest.add(updateRequest);
+
+
+        BulkResponse bulkResponse = bulkRequest.execute().get();
     }
 
 }
